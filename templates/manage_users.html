@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Users</title>
+    <style>
+        table { border-collapse: collapse; width: 80%; margin: 20px auto; }
+        th, td { border: 1px solid #333; padding: 8px; text-align: center; }
+        th { background: #f2f2f2; }
+        form { display: inline; }
+        .btn { padding: 4px 8px; margin: 2px; border-radius: 4px; cursor: pointer; }
+        .add-form { margin: 20px auto; width: 50%; text-align: center; }
+        input, select { margin: 5px; padding: 6px; }
+        .back-btn {
+            display: inline-block; margin: 15px; padding: 8px 16px;
+            background: #007bff; color: white; text-decoration: none; border-radius: 6px;
+        }
+        .back-btn:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h2 style="text-align:center;">User Management</h2>
+    <a href="{{ url_for('dashboard') }}" class="back-btn">⬅ Back to Dashboard</a>
+
+    <!-- Add New User -->
+    <div class="add-form">
+        <h3>Add New User</h3>
+        <form method="POST">
+            <input type="hidden" name="add_user" value="1">
+            <input type="text" name="new_username" placeholder="Username" required>
+            <input type="password" name="new_password" placeholder="Password" required>
+            <select name="new_role" required>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+            </select>
+            <button type="submit" class="btn">Add User</button>
+        </form>
+    </div>
+
+    <!-- Users Table -->
+    <table>
+        <tr>
+            <th>ID</th><th>Username</th><th>Password</th><th>Role</th><th>Actions</th>
+        </tr>
+        {% for u in users %}
+        <tr>
+            <td>{{ u[0] }}</td>
+            <td>{{ u[1] }}</td>
+            <td>{{ u[2] }}</td>
+            <td>{{ u[3] }}</td>
+            <td>
+                <!-- Update Form -->
+                <form method="POST">
+                    <input type="hidden" name="update_user" value="1">
+                    <input type="hidden" name="user_id" value="{{ u[0] }}">
+                    <input type="text" name="update_password" placeholder="New Password" required>
+                    <select name="update_role" required>
+                        <option value="user" {% if u[3] == "user" %}selected{% endif %}>User</option>
+                        <option value="admin" {% if u[3] == "admin" %}selected{% endif %}>Admin</option>
+                    </select>
+                    <button type="submit" class="btn">Update</button>
+                </form>
+
+                <!-- Delete Form -->
+                <form method="POST" onsubmit="return confirm('Delete user {{ u[1] }}?');">
+                    <input type="hidden" name="delete_user" value="1">
+                    <input type="hidden" name="user_id" value="{{ u[0] }}">
+                    <button type="submit" class="btn" style="background:red; color:white;">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
